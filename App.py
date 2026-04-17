@@ -1,22 +1,21 @@
 import streamlit as st
-from huggingface_hub import InferenceClient
+import requests
 from PIL import Image
 import io
 
 st.set_page_config(page_title="Text to Image AI", layout="centered")
 
-client = InferenceClient(
-    provider="hf-inference",
-    api_key="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"  # your HF token here
-)
-
 def generate_image(prompt):
     try:
-        image = client.text_to_image(
-            prompt,
-            model="black-forest-labs/FLUX.1-dev"
-        )
-        return image, None
+        url = f"https://image.pollinations.ai/prompt/{requests.utils.quote(prompt)}"
+        response = requests.get(url, timeout=60)
+        if response.status_code == 200:
+            image = Image.open(io.BytesIO(response.content))
+            return image, None
+        else:
+            return None, f"❌ Error: Status code {response.status_code}"
+    except requests.exceptions.Timeout:
+        return None, "❌ Request timed out. Please try again."
     except Exception as e:
         return None, f"❌ Error: {str(e)}"
 
@@ -32,7 +31,7 @@ prompt = st.text_area(
 
 if st.button("🎨 Generate Image"):
     if prompt.strip():
-        with st.spinner("Generating image... this may take 20-30 seconds..."):
+        with st.spinner("Generating image... please wait..."):
             image, error = generate_image(prompt)
         if error:
             st.error(error)
