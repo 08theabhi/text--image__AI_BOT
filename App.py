@@ -3,7 +3,7 @@ import requests
 from PIL import Image
 import io
 
-API_URL = "https://router.huggingface.co/hf-inference/models/stabilityai/stable-diffusion-2"
+API_URL = "API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0""
 HEADERS = {"Authorization": "Bearer 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"}  # your HF token here
 
 def generate_image(prompt):
